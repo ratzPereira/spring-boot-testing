@@ -227,4 +227,26 @@ public class EmployeeRepositoryTest {
     assertThat(employee.getFirstName()).isEqualTo(employeeOne.getFirstName());
     assertThat(employee.getLastName()).isEqualTo(employeeOne.getLastName());
   }
+
+  //JUnit test for testing custom JPQL query
+  @Test
+  @DisplayName("Test for custom query (SQL) with named params (find by first and last name")
+  public void givenFirstAndLastName_whenFindByNativeSQLWithNamedParams_thenReturnEmployee() {
+
+    //given - pre-condition or setup
+    Employee employeeOne = Employee.builder()
+        .firstName("Ratz")
+        .lastName("Pereira")
+        .email("some@email.com")
+        .build();
+    employeeRepository.save(employeeOne);
+
+    //when - action or the behaviour that we are going test
+    Employee employee = employeeRepository.findByNativeSQLNamedParams(employeeOne.getFirstName(), employeeOne.getLastName());
+
+    //then - verify the output
+    assertThat(employee).isNotNull();
+    assertThat(employee.getFirstName()).isEqualTo(employeeOne.getFirstName());
+    assertThat(employee.getLastName()).isEqualTo(employeeOne.getLastName());
+  }
 }
