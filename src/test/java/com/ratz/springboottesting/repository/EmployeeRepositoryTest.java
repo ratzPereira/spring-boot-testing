@@ -90,4 +90,52 @@ public class EmployeeRepositoryTest {
     assertThat(employee.getId()).isEqualTo(employeeOne.getId());
   }
 
+  //JUnit test for find Employee by email
+  @Test
+  @DisplayName("Test for find Employee by email")
+  public void givenEmployeeEmail_whenFindByEmail_thenReturnEmployee() {
+
+    //given - pre-condition or setup
+    Employee employeeOne = Employee.builder()
+        .firstName("Ratz")
+        .lastName("Pereira")
+        .email("some@email.com")
+        .build();
+
+
+    //when - action or the behaviour that we are going test
+    employeeRepository.save(employeeOne);
+    Employee employee = employeeRepository.findByEmail(employeeOne.getEmail()).get();
+
+
+    //then - verify the output
+    assertThat(employee).isNotNull();
+    assertThat(employee.getEmail()).isEqualTo(employeeOne.getEmail());
+  }
+
+  //JUnit test for update Employee
+  @Test
+  @DisplayName("Test for update Employee")
+  public void givenEmployeeObject_whenUpdateEmployee_thenReturnUpdatedEmployee() {
+
+    //given - pre-condition or setup
+    Employee employeeOne = Employee.builder()
+        .firstName("Ratz")
+        .lastName("Pereira")
+        .email("some@email.com")
+        .build();
+
+
+    //when - action or the behaviour that we are going test
+    employeeRepository.save(employeeOne);
+    Employee employee = employeeRepository.findById(employeeOne.getId()).get();
+    employee.setEmail("updated@email.com");
+    employee.setFirstName("Updated Name");
+    employeeRepository.save(employee);
+
+    //then - verify the output
+    assertThat(employee).isNotNull();
+    assertThat(employee.getEmail()).isEqualTo("updated@email.com");
+    assertThat(employee.getFirstName()).isEqualTo("Updated Name");
+  }
 }
