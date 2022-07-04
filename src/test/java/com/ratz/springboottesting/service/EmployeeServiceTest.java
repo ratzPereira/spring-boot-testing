@@ -7,22 +7,31 @@ import static org.assertj.core.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.BDDMockito;
+import org.junit.jupiter.api.extension.ExtendWith;
+import static org.mockito.BDDMockito.*;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
+@ExtendWith(MockitoExtension.class)
 public class EmployeeServiceTest {
 
+  @Mock
   private EmployeeRepository employeeRepository;
-  private EmployeeService employeeService;
+
+  @InjectMocks
+  private EmployeeServiceImpl employeeService;
+
   private Employee employee;
 
   @BeforeEach
   public void setUp(){
 
-    employeeRepository = Mockito.mock(EmployeeRepository.class);
-    employeeService = new EmployeeServiceImpl(employeeRepository);
+    //employeeRepository = Mockito.mock(EmployeeRepository.class);
+    //employeeService = new EmployeeServiceImpl(employeeRepository);
 
     employee = Employee.builder()
         .id(1L)
@@ -38,9 +47,9 @@ public class EmployeeServiceTest {
   public void givenEmployeeObject_whenSaveEmployee_thenReturnEmployeeObject() {
 
     //given - pre-condition or setup
-    BDDMockito.given(employeeRepository.findByEmail(employee.getEmail())).willReturn(Optional.empty());
+    given(employeeRepository.findByEmail(employee.getEmail())).willReturn(Optional.empty());
 
-    BDDMockito.given(employeeRepository.save(employee)).willReturn(employee);
+    given(employeeRepository.save(employee)).willReturn(employee);
 
 
     //when - action or the behaviour that we are going test
