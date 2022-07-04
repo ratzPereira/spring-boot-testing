@@ -6,7 +6,7 @@ import com.ratz.springboottesting.repository.EmployeeRepository;
 import com.ratz.springboottesting.service.impl.EmployeeServiceImpl;
 import static org.assertj.core.api.Assertions.*;
 
-import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,9 +14,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import static org.mockito.BDDMockito.*;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -75,7 +75,7 @@ public class EmployeeServiceTest {
     given(employeeRepository.findByEmail(employee.getEmail())).willReturn(Optional.of(employee));
 
     //when - action or the behaviour that we are going test
-    org.junit.jupiter.api.Assertions.assertThrows(ResourceNotFoundException.class, () -> employeeService.saveEmployee(employee));
+    Assertions.assertThrows(ResourceNotFoundException.class, () -> employeeService.saveEmployee(employee));
 
     //then
     verify(employeeRepository, never()).save(any(Employee.class));
@@ -103,6 +103,22 @@ public class EmployeeServiceTest {
     //then - verify the output
     assertThat(employeeList).isNotNull();
     assertThat(employeeList.size()).isEqualTo(2);
+
+  }
+
+  @Test
+  @DisplayName("Test for getAllEmployees with empty list")
+  public void givenEmptyEmployeeList_whenGetAllEmployee_thenReturnEmptyEmployeeList() {
+
+    //given - pre-condition or setup
+    given(employeeRepository.findAll()).willReturn(Collections.EMPTY_LIST);
+
+    //when - action or the behaviour that we are going test
+    List<Employee> employeeList = employeeService.getAllEmployees();
+
+    //then - verify the output
+    assertThat(employeeList).isEmpty();
+    assertThat(employeeList.size()).isEqualTo(0);
 
   }
 }
