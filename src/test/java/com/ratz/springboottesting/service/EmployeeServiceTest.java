@@ -137,4 +137,22 @@ public class EmployeeServiceTest {
     assertThat(employeeFound).isNotNull();
     assertThat(employeeFound.getId()).isEqualTo(employee.getId());
   }
+
+  //JUnit test for
+  @Test
+  @DisplayName("Test for updateEmployee")
+  public void given_when_then() {
+
+    //given - pre-condition or setup
+    given(employeeRepository.findById(anyLong())).willReturn(Optional.of(employee));
+    given(employeeRepository.save(employee)).willReturn(employee);
+
+    employee.setEmail("updated@email.com");
+    //when - action or the behaviour that we are going test
+    Employee updatedEmployee = employeeService.updateEmployee(employee);
+
+    //then - verify the output
+    assertThat(updatedEmployee).isNotNull();
+    assertThat(updatedEmployee.getEmail()).isEqualTo("updated@email.com");
+  }
 }
