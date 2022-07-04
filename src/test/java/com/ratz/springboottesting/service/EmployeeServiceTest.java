@@ -121,4 +121,20 @@ public class EmployeeServiceTest {
     assertThat(employeeList.size()).isEqualTo(0);
 
   }
+
+
+  @Test
+  @DisplayName("Test for getEmployeeById method")
+  public void givenEmployeeId_whenFindEmployeeById_thenReturnEmployee() {
+
+    //given - pre-condition or setup
+    given(employeeRepository.findById(anyLong())).willReturn(Optional.of(employee));
+
+    //when - action or the behaviour that we are going test
+    Employee employeeFound = employeeService.getEmployeeBtId(employee.getId());
+
+    //then - verify the output
+    assertThat(employeeFound).isNotNull();
+    assertThat(employeeFound.getId()).isEqualTo(employee.getId());
+  }
 }

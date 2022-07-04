@@ -32,4 +32,19 @@ public class EmployeeServiceImpl implements EmployeeService {
   public List<Employee> getAllEmployees() {
     return employeeRepository.findAll();
   }
+
+  @Override
+  public Employee getEmployeeBtId(long id) {
+
+    Optional<Employee> employee = employeeRepository.findById(id);
+
+    if (!employee.isEmpty()) {
+
+      return employee.get();
+
+    } else {
+
+      throw new ResourceNotFoundException("Employee with that ID not found!");
+    }
+  }
 }
