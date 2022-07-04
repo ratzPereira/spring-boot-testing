@@ -138,10 +138,10 @@ public class EmployeeServiceTest {
     assertThat(employeeFound.getId()).isEqualTo(employee.getId());
   }
 
-  //JUnit test for
+
   @Test
   @DisplayName("Test for updateEmployee")
-  public void given_when_then() {
+  public void givenEmployeeObject_whenUpdateEmployee_thenReturnUpdatedEmployee() {
 
     //given - pre-condition or setup
     given(employeeRepository.findById(anyLong())).willReturn(Optional.of(employee));
@@ -154,5 +154,21 @@ public class EmployeeServiceTest {
     //then - verify the output
     assertThat(updatedEmployee).isNotNull();
     assertThat(updatedEmployee.getEmail()).isEqualTo("updated@email.com");
+  }
+
+
+  @Test
+  @DisplayName("Test for deleteEmployee")
+  public void givenEmployeeId_whenDeleteEmployee_thenDeleteEmployeeSuccessfully() {
+
+    //given - pre-condition or setup
+    given(employeeRepository.findById(anyLong())).willReturn(Optional.of(employee));
+
+    //when - action or the behaviour that we are going test
+    willDoNothing().given(employeeRepository).deleteById(anyLong());
+    employeeService.deleteEmployee(employee.getId());
+
+    //then - verify the output
+    verify(employeeRepository, times(1)).deleteById(employee.getId());
   }
 }
