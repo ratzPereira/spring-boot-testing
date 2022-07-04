@@ -6,6 +6,7 @@ import com.ratz.springboottesting.repository.EmployeeRepository;
 import com.ratz.springboottesting.service.EmployeeService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -25,5 +26,10 @@ public class EmployeeServiceImpl implements EmployeeService {
     if (savedEmployee.isPresent()) throw new ResourceNotFoundException("User already exist with given email");
 
     return employeeRepository.save(employee);
+  }
+
+  @Override
+  public List<Employee> getAllEmployees() {
+    return employeeRepository.findAll();
   }
 }
