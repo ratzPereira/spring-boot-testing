@@ -149,7 +149,7 @@ public class EmployeeServiceTest {
 
     employee.setEmail("updated@email.com");
     //when - action or the behaviour that we are going test
-    Employee updatedEmployee = employeeService.updateEmployee(employee);
+    Employee updatedEmployee = employeeService.updateEmployee(employee.getId(), employee);
 
     //then - verify the output
     assertThat(updatedEmployee).isNotNull();

@@ -33,4 +33,9 @@ public class EmployeeController {
   public ResponseEntity<Employee> getEmployeeById(@PathVariable long id){
     return employeeService.getEmployeeBtId(id).map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
   }
+
+  @PostMapping("/{id}")
+  public ResponseEntity<Employee> updateEmployee(@PathVariable long id, @RequestBody Employee employee){
+    return ResponseEntity.ok().body(employeeService.updateEmployee(id, employee));
+  }
 }
