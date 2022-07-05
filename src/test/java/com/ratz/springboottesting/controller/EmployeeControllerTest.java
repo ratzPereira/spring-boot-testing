@@ -16,6 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.willAnswer;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -118,7 +119,7 @@ public class EmployeeControllerTest {
   public void givenEmployeeId_whenGetEmployeeById_thenReturnEmployee() throws Exception {
 
     //given - pre-condition or setup
-    given(employeeService.getEmployeeBtId(employee.getId())).willReturn(Optional.of(employee));
+    given(employeeService.getEmployeeById(employee.getId())).willReturn(Optional.of(employee));
 
     //when - action or the behaviour that we are going test
     ResultActions response = mockMvc.perform(get("/api/employees/{id}", employee.getId())
@@ -139,7 +140,7 @@ public class EmployeeControllerTest {
   public void givenEmployeeId_whenGetEmployeeById_thenReturnEmployeeWithError() throws Exception {
 
     //given - pre-condition or setup
-    given(employeeService.getEmployeeBtId(employee.getId())).willReturn(Optional.empty());
+    given(employeeService.getEmployeeById(employee.getId())).willReturn(Optional.empty());
 
     //when - action or the behaviour that we are going test
     ResultActions response = mockMvc.perform(get("/api/employees/{id}", employee.getId())
@@ -151,13 +152,13 @@ public class EmployeeControllerTest {
         .andDo(print());
   }
 
-  //JUnit test for
+
   @Test
   @DisplayName("Test for update Employee with success")
   public void givenEmployee_whenUpdateEmployee_thenReturnUpdatedEmployee() throws Exception {
 
     //given - pre-condition or setup
-    given(employeeService.getEmployeeBtId(employee.getId())).willReturn(Optional.of(employee));
+    given(employeeService.getEmployeeById(employee.getId())).willReturn(Optional.of(employee));
     given(employeeService.updateEmployee(employee.getId(), updatedEmployee))
         .willAnswer((invocation) -> invocation.getArgument(1));
 
@@ -171,6 +172,25 @@ public class EmployeeControllerTest {
         .andExpect(jsonPath("$.firstName", is(updatedEmployee.getFirstName())))
         .andExpect(jsonPath("$.lastName", is(updatedEmployee.getLastName())))
         .andExpect(jsonPath("$.email", is(updatedEmployee.getEmail())))
+        .andDo(print());
+  }
+
+  @Test
+  @DisplayName("Test for update Employee with error")
+  public void givenEmployee_whenUpdateEmployee_thenReturnUpdatedEmployeeWithError() throws Exception {
+
+    //given - pre-condition or setup
+    given(employeeService.getEmployeeById(employee.getId())).willReturn(Optional.empty());
+    given(employeeService.updateEmployee(anyLong(), ArgumentMatchers.any(Employee.class)))
+        .willAnswer((invocation) -> invocation.getArgument(1));
+
+    //when - action or the behaviour that we are going test
+    ResultActions response = mockMvc.perform(post("/api/employees/{id}", employee.getId())
+        .contentType(MediaType.APPLICATION_JSON));
+        //.content(objectMapper.writeValueAsString(updatedEmployee)));
+
+    //then - verify the output
+    response.andExpect(status().isBadRequest())
         .andDo(print());
   }
 }
