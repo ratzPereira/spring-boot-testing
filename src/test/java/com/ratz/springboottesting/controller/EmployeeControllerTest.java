@@ -17,7 +17,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.BDDMockito.willAnswer;
+import static org.mockito.BDDMockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
 @WebMvcTest //it will only load the spring beans that are required to test the controller
@@ -192,5 +191,23 @@ public class EmployeeControllerTest {
     //then - verify the output
     response.andExpect(status().isBadRequest())
         .andDo(print());
+  }
+
+  //JUnit test for
+  @Test
+  @DisplayName("Test for delete Employee")
+  public void givenEmployeeId_whenDeletingEmployee_thenDeleteEmployee() throws Exception {
+
+    //given - pre-condition or setup
+    given(employeeService.getEmployeeById(employee.getId())).willReturn(Optional.of(employee));
+    willDoNothing().given(employeeService).deleteEmployee(employee.getId());
+
+    //when - action or the behaviour that we are going test
+    ResultActions response = mockMvc.perform(delete("/api/employees/{id}", employee.getId()));
+
+    //then - verify the output
+    response.andExpect(status().isOk())
+        .andDo(print());
+
   }
 }
