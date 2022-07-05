@@ -103,7 +103,7 @@ public class EmployeeControllerTest {
 
   }
 
-  //JUnit test for
+
   @Test
   @DisplayName("Test for get Employee by Id with success")
   public void givenEmployeeId_whenGetEmployeeById_thenReturnEmployee() throws Exception {
@@ -121,6 +121,24 @@ public class EmployeeControllerTest {
         .andExpect(jsonPath("$.firstName", is(employee.getFirstName())))
         .andExpect(jsonPath("$.lastName", is(employee.getLastName())))
         .andExpect(jsonPath("$.email", is(employee.getEmail())))
+        .andDo(print());
+  }
+
+
+  @Test
+  @DisplayName("Test for get Employee by Id with error")
+  public void givenEmployeeId_whenGetEmployeeById_thenReturnEmployeeWithError() throws Exception {
+
+    //given - pre-condition or setup
+    given(employeeService.getEmployeeBtId(employee.getId())).willReturn(Optional.empty());
+
+    //when - action or the behaviour that we are going test
+    ResultActions response = mockMvc.perform(get("/api/employees/{id}", employee.getId())
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(objectMapper.writeValueAsString(employee)));
+
+    //then - verify the output
+    response.andExpect(status().isNotFound())
         .andDo(print());
   }
 }
