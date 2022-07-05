@@ -13,7 +13,13 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 import static org.hamcrest.CoreMatchers.is;
+import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -38,7 +44,7 @@ public class EmployeeControllerIntegrationTests {
 
   @BeforeEach
   public void setUp(){
-    employeeRepository.deleteAll();
+
 
     employee = Employee.builder()
         .id(1l)
@@ -58,10 +64,12 @@ public class EmployeeControllerIntegrationTests {
         .lastName("Employee")
         .email("updated@email.com")
         .build();
+
+    employeeRepository.deleteAll();
   }
 
   @Test
-  @DisplayName("Test for create Employee")
+  @DisplayName("Integration Test for create Employee")
   public void givenEmployeeObject_whenCreateEmployee_thenReturnSavedEmployee() throws Exception {
 
     //when - action or the behaviour that we are going test
@@ -78,4 +86,51 @@ public class EmployeeControllerIntegrationTests {
 
   }
 
+  @Test
+  @DisplayName("Integration Test for get all Employees")
+  public void givenListOfEmployee_whenGetAllEmployee_thenReturnAllEmployees() throws Exception {
+
+    //given - pre-condition or setup
+    List<Employee> employeeList = new ArrayList<>();
+    employeeList.add(employee);
+    employeeList.add(employeeTwo);
+    employeeRepository.saveAll(employeeList);
+
+
+    //when - action or the behaviour that we are going test
+    ResultActions response = mockMvc.perform(get("/api/employees"));
+
+
+    //then - verify the output
+    response.andExpect(status().isOk())
+        .andExpect(jsonPath("$.size()", is(employeeList.size())))
+        .andDo(print());
+
+  }
+
+  @Test
+  @DisplayName("Integration Test for get Employee by Id with success")
+  public void givenEmployeeId_whenGetEmployeeById_thenReturnEmployee() throws Exception {
+
+    //given - pre-condition or setup
+    employeeRepository.save(employeeTwo);
+
+    //when - action or the behaviour that we are going test
+    ResultActions response = mockMvc.perform(get("/api/employees/{id}", employeeTwo.getId()));
+
+    //then - verify the output
+    response.andExpect(status().isOk())
+        .andExpect(jsonPath("$.firstName", is(employeeTwo.getFirstName())))
+        .andExpect(jsonPath("$.lastName", is(employeeTwo.getLastName())))
+        .andExpect(jsonPath("$.email", is(employeeTwo.getEmail())))
+        .andDo(print());
+  }
+
+  @Test
+  @DisplayName("Integration Test for get Employee by Id with error")
+  public void givenEmployeeId_whenGetEmployeeById_thenReturnEmployeeWithError() throws Exception {
+
+    mockMvc.perform(get("/api/employees/{id}", employee.getId())).andExpect(status().isNotFound());
+
+  }
 }
