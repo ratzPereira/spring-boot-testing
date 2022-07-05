@@ -6,6 +6,7 @@ import com.ratz.springboottesting.repository.EmployeeRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,9 +19,10 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.mockito.BDDMockito.willDoNothing;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -131,6 +133,57 @@ public class EmployeeControllerIntegrationTests {
   public void givenEmployeeId_whenGetEmployeeById_thenReturnEmployeeWithError() throws Exception {
 
     mockMvc.perform(get("/api/employees/{id}", employee.getId())).andExpect(status().isNotFound());
+
+  }
+
+  @Test
+  @DisplayName("Integration Test for update Employee with success")
+  public void givenEmployee_whenUpdateEmployee_thenReturnUpdatedEmployee() throws Exception {
+
+    //given - pre-condition or setup
+    employeeRepository.save(employeeTwo);
+
+    //when - action or the behaviour that we are going test
+    ResultActions response = mockMvc.perform(post("/api/employees/{id}", employeeTwo.getId())
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(objectMapper.writeValueAsString(updatedEmployee)));
+
+    //then - verify the output
+    response.andExpect(status().isOk())
+        .andExpect(jsonPath("$.firstName", is(updatedEmployee.getFirstName())))
+        .andExpect(jsonPath("$.lastName", is(updatedEmployee.getLastName())))
+        .andExpect(jsonPath("$.email", is(updatedEmployee.getEmail())))
+        .andDo(print());
+  }
+
+  @Test
+  @DisplayName("Integration Test for update Employee with error")
+  public void givenEmployee_whenUpdateEmployee_thenReturnUpdatedEmployeeWithError() throws Exception {
+
+    //when - action or the behaviour that we are going test
+    ResultActions response = mockMvc.perform(post("/api/employees/{id}", employee.getId())
+        .contentType(MediaType.APPLICATION_JSON));
+    //.content(objectMapper.writeValueAsString(updatedEmployee)));
+
+    //then - verify the output
+    response.andExpect(status().isBadRequest())
+        .andDo(print());
+  }
+
+  @Test
+  @DisplayName("Integration Test for delete Employee")
+  public void givenEmployeeId_whenDeletingEmployee_thenDeleteEmployee() throws Exception {
+
+    //given - pre-condition or setup
+    employeeRepository.save(employeeTwo);
+
+
+    //when - action or the behaviour that we are going test
+    ResultActions response = mockMvc.perform(delete("/api/employees/{id}", employeeTwo.getId()));
+
+    //then - verify the output
+    response.andExpect(status().isOk())
+        .andDo(print());
 
   }
 }
