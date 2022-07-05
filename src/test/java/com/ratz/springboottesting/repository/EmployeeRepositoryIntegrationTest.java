@@ -1,5 +1,6 @@
 package com.ratz.springboottesting.repository;
 
+import com.ratz.springboottesting.integration.AbstractionBaseTest;
 import com.ratz.springboottesting.model.Employee;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -15,7 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class EmployeeRepositoryIntegrationTest {
+public class EmployeeRepositoryIntegrationTest extends AbstractionBaseTest {
 
   @Autowired
   private EmployeeRepository employeeRepository;
