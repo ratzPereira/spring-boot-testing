@@ -131,7 +131,7 @@ public class EmployeeServiceTest {
     given(employeeRepository.findById(anyLong())).willReturn(Optional.of(employee));
 
     //when - action or the behaviour that we are going test
-    Employee employeeFound = employeeService.getEmployeeBtId(employee.getId());
+    Employee employeeFound = employeeService.getEmployeeBtId(employee.getId()).get();
 
     //then - verify the output
     assertThat(employeeFound).isNotNull();

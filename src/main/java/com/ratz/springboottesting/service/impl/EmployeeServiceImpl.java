@@ -34,13 +34,13 @@ public class EmployeeServiceImpl implements EmployeeService {
   }
 
   @Override
-  public Employee getEmployeeBtId(long id) {
+  public Optional<Employee> getEmployeeBtId(long id) {
 
     Optional<Employee> employee = employeeRepository.findById(id);
 
     if (!employee.isEmpty()) {
 
-      return employee.get();
+      return employee;
 
     } else {
 
